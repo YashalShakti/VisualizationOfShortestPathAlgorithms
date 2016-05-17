@@ -7,14 +7,12 @@
 using namespace std;
 typedef AStar AS;
 
-
 // Determine priority (in the priority queue)
 bool operator<(const node &a, const node &b) {
   return a.getPriority() > b.getPriority();
 }
 
-// A-star algorithm.
-// The route returned is a string of direction digits.
+// Function to find the path
 string AS::pathFind(const int &xStart, const int &yStart,
                     const int &xFinish, const int &yFinish) {
   static priority_queue<node> pq[2]; // list of open (not-yet-tried) nodes
@@ -25,7 +23,7 @@ string AS::pathFind(const int &xStart, const int &yStart,
   static char c;
   pqi = 0;
 
-  // reset the node maps
+  // Reset the node maps
   for (y = 0; y < m; y++) {
     for (x = 0; x < n; x++) {
       closed_nodes_map[x][y] = 0;
@@ -33,12 +31,13 @@ string AS::pathFind(const int &xStart, const int &yStart,
     }
   }
 
-  // create the start node and push into list of open nodes
+  // Create the start node and push into list of open nodes
   n0 = new node(xStart, yStart, 0, 0);
   n0->updatePriority(xFinish, yFinish);
   pq[pqi].push(*n0);
+
   open_nodes_map[x][y] = n0->getPriority(); // mark it on the open nodes map
-  delete n0; //added by someone
+  delete n0;
   // A* search
   while (!pq[pqi].empty()) {
     // get the current node w/ the highest priority
@@ -50,9 +49,9 @@ string AS::pathFind(const int &xStart, const int &yStart,
     y = n0->getyPos();
 
     pq[pqi].pop(); // remove the node from the open list
+    ShortestPath::addToSquareQueue(x,y,0.1,COLOR_BLUE);
     open_nodes_map[x][y] = 0;
     // mark it on the closed nodes map
-    ShortestPath::addToSquareQueue(x,y,0.5,COLOR_BLUE);
     closed_nodes_map[x][y] = 1;
 
     // quit searching when the goal state is reached
@@ -61,12 +60,7 @@ string AS::pathFind(const int &xStart, const int &yStart,
       // generate the path from finish to start
       // by following the directions
 
-      for(int q=0;q<m;q++){
-        for(int a=0;a<n;a++){
-          cout<<" "<<dir_map[a][q];
-        }
-        cout<<"\n";
-      }
+
       string path = "";
       while (true) {
         j = dir_map[x][y];
@@ -145,9 +139,7 @@ string AS::pathFind(const int &xStart, const int &yStart,
 }
 
 int AS::main(int sourceV[2], int endV[2], int inputMatrix[n][m]) {
-  srand(time(NULL));
 
-  // create empty map
   for (int y = 0; y < m; y++) {
     for (int x = 0; x < n; x++) {
       if (inputMatrix[x][y] == 0) {
@@ -164,70 +156,23 @@ int AS::main(int sourceV[2], int endV[2], int inputMatrix[n][m]) {
   yB = endV[0];
   xB = endV[1];
 
-  std::cout << xA + " " << yA << "\n";
-  std::cout << xB + " " << yB << "\n";
-  for(int y=0;y<m;y++)
-  {
-    for(int x=0;x<n;x++)
-      if(map[x][y]==0)
-        cout<<" .";
-      else if(map[x][y]==1)
-        cout<<" 0"; //obstacle
-      else if(map[x][y]==2)
-        cout<<" S"; //start
-      else if(map[x][y]==3)
-        cout<<" R"; //route
-      else if(map[x][y]==4)
-        cout<<" F"; //finish
-    cout<<endl;
-  }
   cout << "Map Size (X,Y): " << n << "," << m << endl;
   cout << "Start: " << xA << "," << yA << endl;
   cout << "Finish: " << xB << "," << yB << endl;
+
   // get the route
   clock_t start = clock();
   string route = AS::pathFind(xA, yA, xB, yB);
   if (route == "") cout << "An empty route generated!" << endl;
   clock_t end = clock();
+
   double time_elapsed = double(end - start);
   cout << "Time to calculate the route (ms): " << time_elapsed << endl;
   cout << "Route:" << endl;
   cout << route << endl << endl;
-
-  // follow the route on the map and display it
-  if (route.length() > 0) {
-    int j;
-    char c;
-    int x = xA;
-    int y = yA;
-    map[x][y] = 2;
-    for (int i = 1; i < route.length(); i++) {
-      c = route.at(i);
-      j = c - '0';  // original --> j=atoi(&c);
-      x = x + dx[j];
-      y = y + dy[j];
-      map[x][y] = 3;
-    }
-    map[x][y] = 4;
-    for(int y=0;y<m;y++)
-    {
-      for(int x=0;x<n;x++)
-        if(map[x][y]==0)
-          cout<<".";
-        else if(map[x][y]==1)
-          cout<<"O"; //obstacle
-        else if(map[x][y]==2)
-          cout<<"S"; //start
-        else if(map[x][y]==3)
-          cout<<"R"; //route
-        else if(map[x][y]==4)
-          cout<<"F"; //finish
-
-      cout<<endl;
-    }
-  }
   return (0);
 }
+
 int node::max(int abs, int abs1) const {
   return abs>=abs1?abs:abs1;
 }
