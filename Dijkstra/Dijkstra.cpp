@@ -47,9 +47,11 @@ void dijkstra(int graph[V][V], int src, int destination) {
         if (u == destination || v == destination) {
           goto result;
         }
-        ShortestPath::addToSquareQueue(v % NUM_DIVISIONS, v / NUM_DIVISIONS, 0, COLOR_BLUE);
+        ShortestPath::addToSquareQueue(v % NUM_DIVISIONS, v / NUM_DIVISIONS, -1, COLOR_BLUE);
+        ShortestPath::addToClearQueue(v % NUM_DIVISIONS, v / NUM_DIVISIONS, -0.5, COLOR_WHITE);
       } else if (graph[u][v] == -1) {
-        ShortestPath::addToSquareQueue(v % NUM_DIVISIONS, v / NUM_DIVISIONS, 10, COLOR_RED);
+        ShortestPath::addToSquareQueue(v % NUM_DIVISIONS, v / NUM_DIVISIONS, 9, COLOR_RED);
+        ShortestPath::addToClearQueue(v % NUM_DIVISIONS, v / NUM_DIVISIONS, 10, COLOR_BLACK);
       }
     }
   }
@@ -57,7 +59,8 @@ void dijkstra(int graph[V][V], int src, int destination) {
   int p = parent[destination];
   while (true) {
     std::cout << p << ">>";
-    ShortestPath::addToSquareQueue(p % NUM_DIVISIONS, p / NUM_DIVISIONS, 1, COLOR_RANDOM);
+    ShortestPath::addToSquareQueue(p % NUM_DIVISIONS, p / NUM_DIVISIONS, -0.5, COLOR_RANDOM);
+    ShortestPath::addToClearQueue(p % NUM_DIVISIONS, p / NUM_DIVISIONS, 0, COLOR_WHITE);
     p = parent[p];
     if (p == src) {
       break;

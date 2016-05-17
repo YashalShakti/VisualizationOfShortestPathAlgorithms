@@ -1,6 +1,7 @@
 #include <iostream>
 #include "main.h"
 #include "ShortestPath/ShortestPath.h"
+#include "AStar/AStar.h"
 int main(int argc, char *argv[]) {
   system(" zenity --info --title=\"Visualizing shortest path algorithms\""
              " --text=\"Click to select a source,"

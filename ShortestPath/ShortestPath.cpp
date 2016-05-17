@@ -7,6 +7,7 @@
 #include <queue>
 #include "ShortestPath.h"
 #include "../Dijkstra/Dijkstra.h"
+#include "../AStar/AStar.h"
 
 struct Square {
   int i;
@@ -16,21 +17,23 @@ struct Square {
 };
 
 float w = 720.0f, h = 720.0f;
-float dx = w / NUM_DIVISIONS;
-float dy = h / NUM_DIVISIONS;
+float mouseDx = w / NUM_DIVISIONS;
+float mouseDy = h / NUM_DIVISIONS;
 typedef ShortestPath SP;
 
 int vertice[NUM_DIVISIONS][NUM_DIVISIONS];
 std::queue<Square> squareQueue;
+std::queue<Square> clearQueue;
 
 const int MODE_START = -1;
 const int MODE_END = -2;
 const int MODE_BLOCK = 0;
-const int MODE_CALC = 1;
+const int MODE_CALC1 = 1;
+const int MODE_CALC2 = 2;
 int left_click = 0;
 int block_count = 0;
 int mode = MODE_START;
-const int timeDelay = 23;
+const int timeDelay = 15;
 
 int SP::main(int argc, char **argv) {
   glutInit(&argc, argv);
@@ -41,6 +44,7 @@ int SP::main(int argc, char **argv) {
   glutMouseFunc(mouseClickListener);
   glutMotionFunc(mouseMotion);
   glutReshapeFunc(reshape);
+  glutKeyboardFunc(keyboardListener);
   glutTimerFunc(timeDelay, timer, 0);
   glutMainLoop();
 }
@@ -64,22 +68,22 @@ void SP::glInit() {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
 
-   glEnable(GL_DEPTH_TEST);
+  glEnable(GL_DEPTH_TEST);
 
   glOrtho(0, w, 0, h, -1, 1);
 }
 
 void SP::drawBackground() {
   glColor3f(0, 0, 0);
-  for (float i = 0.0; i < w + dx; i = i + dx) {
+  for (float i = 0.0; i < w + mouseDx; i = i + mouseDx) {
     glBegin(GL_LINE_STRIP);
-    for (float j = 0.0; j < h + dy; j = j + dy)
+    for (float j = 0.0; j < h + mouseDy; j = j + mouseDy)
       glVertex2f(i, j);
     glEnd();
   }
-  for (float i = 0.0; i < h + dy; i = i + dy) {
+  for (float i = 0.0; i < h + mouseDy; i = i + mouseDy) {
     glBegin(GL_LINE_STRIP);
-    for (float j = 0.0; j < w + dx; j = j + dx)
+    for (float j = 0.0; j < w + mouseDx; j = j + mouseDx)
       glVertex2f(j, i);
     glEnd();
   }
@@ -93,11 +97,21 @@ void SP::timer(int t) {
   }
   glutTimerFunc(timeDelay, timer, t);
 }
+
+void ShortestPath::clearDisplay() {
+  // drawBackground();
+  while (!clearQueue.empty()) {
+    Square square = clearQueue.front();
+    clearQueue.pop();
+    drawSquare(square.i, square.j, square.z, square.color);
+  }
+
+}
 void ShortestPath::disable() {
   glDisable(GL_DEPTH_TEST);
 }
 void  SP::addToSquareQueue(int i, int j, float z, const float *color) {
-  if (mode == MODE_CALC) {
+  if (mode == MODE_CALC1 || mode == MODE_CALC2) {
     Square temp;
     temp.i = i;
     temp.j = j;
@@ -109,14 +123,24 @@ void  SP::addToSquareQueue(int i, int j, float z, const float *color) {
   }
 }
 
+void  SP::addToClearQueue(int i, int j, float z, const float *color) {
+  Square temp;
+  temp.i = i;
+  temp.j = j;
+  temp.z = z;
+  temp.color = color;
+  clearQueue.push(temp);
+}
+
+
 void SP::drawSquare(int i, int j, float z, const float *color) {
   j = NUM_DIVISIONS - 1 - j;
   glColor4fv(color);
   glBegin(GL_QUADS);
-  glVertex3f((i) * dx, (j) * dy, z);
-  glVertex3f((i + 1) * dx, (j) * dy, z);
-  glVertex3f((i + 1) * dx, (j + 1) * dy, z);
-  glVertex3f((i) * dx, (j + 1) * dy, z);
+  glVertex3f((i) * mouseDx, (j) * mouseDy, z);
+  glVertex3f((i + 1) * mouseDx, (j) * mouseDy, z);
+  glVertex3f((i + 1) * mouseDx, (j + 1) * mouseDy, z);
+  glVertex3f((i) * mouseDx, (j + 1) * mouseDy, z);
   glEnd();
   glFlush();
 }
@@ -153,9 +177,10 @@ void SP::setTile(int i, int j) {
   }
 
 }
-void SP::adMat() {
-  int source, destination;
+int sourceV[2], destinationV[2];
 
+void SP::adMat() {
+  int sourcePoint, destinationPoint;
   int adMat[NUM_DIVISIONS * NUM_DIVISIONS][NUM_DIVISIONS * NUM_DIVISIONS];
   for (int i = 0; i < NUM_DIVISIONS * NUM_DIVISIONS; i++) {
     for (int j = 0; j < NUM_DIVISIONS * NUM_DIVISIONS; j++) {
@@ -169,9 +194,13 @@ void SP::adMat() {
       }
       int position = NUM_DIVISIONS * i + j;
       if (vertice[i][j] == -1) {
-        source = position;
+        sourceV[0] = i;
+        sourceV[1] = j;
+        sourcePoint = position;
       } else if (vertice[i][j] == -2) {
-        destination = position;
+        destinationV[0] = i;
+        destinationV[1] = j;
+        destinationPoint = position;
       }
 
       if (i > 0) {
@@ -215,15 +244,14 @@ void SP::adMat() {
       }
     }
   }
-
-  mode = MODE_CALC;
+  mode = MODE_CALC1;
   Dijkstra *dijkstra = new Dijkstra();
-  dijkstra->main(adMat, source, destination);
+  dijkstra->main(adMat, sourcePoint, destinationPoint);
 }
 
 void SP::mouseClickListener(int btn, int state, int x, int y) {
-  int i = x / dx;
-  int j = y / dy;
+  int i = x / mouseDx;
+  int j = y / mouseDy;
 
   if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
     setTile(i, j);
@@ -233,15 +261,45 @@ void SP::mouseClickListener(int btn, int state, int x, int y) {
   } else if (btn == GLUT_LEFT_BUTTON && state == GLUT_UP) {
     left_click = 0;
   } else if (btn == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN) {
-    adMat();
+    if (mode == MODE_CALC1) {
+      //glInit();
+      mode = MODE_CALC2;
+      clearDisplay();
+      /* AStar *aStar = new AStar();
+       aStar->main(sourceV, destinationV, vertice);*/
+    } else if (mode == MODE_CALC2) {
+      AStar *aStar = new AStar();
+      aStar->main(sourceV, destinationV, vertice);
+    } else {
+      adMat();
+    }
   }
   glutPostRedisplay();
 }
 
+void SP::keyboardListener(unsigned char key, int x, int y) {
+  switch (key) {
+    case 'z': {
+      if (mode == MODE_CALC1) {
+        //glInit();
+        mode = MODE_CALC2;
+        clearDisplay();
+        /* AStar *aStar = new AStar();
+         aStar->main(sourceV, destinationV, vertice);*/
+      } else if (mode == MODE_CALC2) {
+        AStar *aStar = new AStar();
+        aStar->main(sourceV, destinationV, vertice);
+      } else {
+        adMat();
+      }
+    }
+      glutPostRedisplay();
+  }
+};
 void SP::mouseMotion(int x, int y) {
   if (mode == MODE_BLOCK && block_count > 0 && left_click) {
-    int i = x / dx;
-    int j = y / dy;
+    int i = x / mouseDx;
+    int j = y / mouseDy;
     setTile(i, j);
   }
 }
