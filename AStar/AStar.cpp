@@ -60,13 +60,24 @@ string AS::pathFind(const int &xStart, const int &yStart,
     if (x == xFinish && y == yFinish) {
       // generate the path from finish to start
       // by following the directions
+
+      for(int q=0;q<m;q++){
+        for(int a=0;a<n;a++){
+          cout<<" "<<dir_map[a][q];
+        }
+        cout<<"\n";
+      }
       string path = "";
-      while (!(x == xStart && y == yStart)) {
+      while (true) {
         j = dir_map[x][y];
         c = '0' + (j + dir / 2) % dir;
         path = c + path;
         x += dx[j];
         y += dy[j];
+        if((x == xStart && y == yStart)){
+          break;
+        }
+        ShortestPath::addToSquareQueue(x,y,10,COLOR_RANDOM);
       }
 
       // garbage collection
@@ -147,7 +158,6 @@ int AS::main(int sourceV[2], int endV[2], int inputMatrix[n][m]) {
     }
   }
 
-  // randomly select start and finish locations
   int xA, yA, xB, yB;
   yA = sourceV[0];
   xA = sourceV[1];
@@ -156,7 +166,21 @@ int AS::main(int sourceV[2], int endV[2], int inputMatrix[n][m]) {
 
   std::cout << xA + " " << yA << "\n";
   std::cout << xB + " " << yB << "\n";
-
+  for(int y=0;y<m;y++)
+  {
+    for(int x=0;x<n;x++)
+      if(map[x][y]==0)
+        cout<<" .";
+      else if(map[x][y]==1)
+        cout<<" 0"; //obstacle
+      else if(map[x][y]==2)
+        cout<<" S"; //start
+      else if(map[x][y]==3)
+        cout<<" R"; //route
+      else if(map[x][y]==4)
+        cout<<" F"; //finish
+    cout<<endl;
+  }
   cout << "Map Size (X,Y): " << n << "," << m << endl;
   cout << "Start: " << xA << "," << yA << endl;
   cout << "Finish: " << xB << "," << yB << endl;
@@ -183,9 +207,28 @@ int AS::main(int sourceV[2], int endV[2], int inputMatrix[n][m]) {
       x = x + dx[j];
       y = y + dy[j];
       map[x][y] = 3;
-      ShortestPath::addToSquareQueue(x,y,10,COLOR_RANDOM);
     }
     map[x][y] = 4;
+    for(int y=0;y<m;y++)
+    {
+      for(int x=0;x<n;x++)
+        if(map[x][y]==0)
+          cout<<".";
+        else if(map[x][y]==1)
+          cout<<"O"; //obstacle
+        else if(map[x][y]==2)
+          cout<<"S"; //start
+        else if(map[x][y]==3)
+          cout<<"R"; //route
+        else if(map[x][y]==4)
+          cout<<"F"; //finish
+
+      cout<<endl;
+    }
   }
   return (0);
 }
+int node::max(int abs, int abs1) const {
+  return abs>=abs1?abs:abs1;
+}
+

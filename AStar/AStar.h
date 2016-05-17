@@ -62,6 +62,7 @@ class node {
     level += (dir == 8 ? (i % 2 == 0 ? 10 : 14) : 10);
   }
 
+  int max(int abs, int abs1) const;
   // Estimation function for the remaining distance to the goal.
   const int &estimate(const int &xDest, const int &yDest) const {
     static int xd, yd, d;
@@ -69,13 +70,13 @@ class node {
     yd = yDest - yPos;
 
     // Euclidian Distance
-    d = static_cast<int>(sqrt(xd * xd + yd * yd));
+    //d = static_cast<int>(sqrt(xd * xd + yd * yd));
 
     // Manhattan distance
     //d=abs(xd)+abs(yd);
 
     // Chebyshev distance
-    //d=max(abs(xd), abs(yd));
+    d=max(abs(xd), abs(yd));
 
     return (d);
   }

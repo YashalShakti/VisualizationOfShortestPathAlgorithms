@@ -153,6 +153,7 @@ void SP::reshape(int w, int h) {
   glOrtho(0, w, 0, h, -10, 10);
 
 }
+int sourceV[2], destinationV[2];
 
 void SP::setTile(int i, int j) {
   if (vertice[j][i] != 1) {
@@ -161,11 +162,15 @@ void SP::setTile(int i, int j) {
   switch (mode) {
     case MODE_START:
       vertice[j][i] = MODE_START;
+      sourceV[0] = j;
+      sourceV[1] = i;
       mode = MODE_END;
       addToSquareQueue(i, j, 1, COLOR_GREEN);
       return;
     case MODE_END:
       vertice[j][i] = MODE_END;
+      destinationV[0] = j;
+      destinationV[1] = i;
       mode = MODE_BLOCK;
       addToSquareQueue(i, j, 1, COLOR_ORANGE);
       return;
@@ -177,7 +182,6 @@ void SP::setTile(int i, int j) {
   }
 
 }
-int sourceV[2], destinationV[2];
 
 void SP::adMat() {
   int sourcePoint, destinationPoint;
@@ -194,12 +198,9 @@ void SP::adMat() {
       }
       int position = NUM_DIVISIONS * i + j;
       if (vertice[i][j] == -1) {
-        sourceV[0] = i;
-        sourceV[1] = j;
+
         sourcePoint = position;
       } else if (vertice[i][j] == -2) {
-        destinationV[0] = i;
-        destinationV[1] = j;
         destinationPoint = position;
       }
 
@@ -293,8 +294,21 @@ void SP::keyboardListener(unsigned char key, int x, int y) {
         adMat();
       }
     }
-      glutPostRedisplay();
+      break;
+    case 'd': {
+      adMat();
+    }
+      break;
+    case 'a': {
+      AStar *aStar = new AStar();
+      aStar->main(sourceV, destinationV, vertice);
+    }
+      break;
+    case 'c': {
+      clearDisplay();
+    }
   }
+  glutPostRedisplay();
 };
 void SP::mouseMotion(int x, int y) {
   if (mode == MODE_BLOCK && block_count > 0 && left_click) {

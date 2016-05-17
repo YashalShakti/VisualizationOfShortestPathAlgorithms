@@ -58,7 +58,7 @@ void dijkstra(int graph[V][V], int src, int destination) {
   result :
   int p = parent[destination];
   while (true) {
-    std::cout << p << ">>";
+  //  std::cout << p << ">>";
     ShortestPath::addToSquareQueue(p % NUM_DIVISIONS, p / NUM_DIVISIONS, -0.5, COLOR_RANDOM);
     ShortestPath::addToClearQueue(p % NUM_DIVISIONS, p / NUM_DIVISIONS, 0, COLOR_WHITE);
     p = parent[p];
@@ -68,7 +68,7 @@ void dijkstra(int graph[V][V], int src, int destination) {
   }
   for (int i = 0; i < V; i++) {
   }
-  printSolution(dist, V);
+  //printSolution(dist, V);
 }
 
 int Dijkstra::main(int graph[V][V], int source, int destination) {
