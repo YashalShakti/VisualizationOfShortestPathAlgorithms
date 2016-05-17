@@ -86,7 +86,7 @@ class AStar {
  public:
   int main(int sourceV[2], int endV[2],int inputMatrix[n][m]);
  private:
-  static std::string pathFind(const int &xStart, const int &yStart, const int &xFinish, const int &yFinish);
+  static int pathFind(const int &xStart, const int &yStart, const int &xFinish, const int &yFinish);
 };
 
 bool operator<(const node &a, const node &b);

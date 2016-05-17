@@ -23,6 +23,7 @@ class ShortestPath {
   static void disable();
   static void addToSquareQueue(int i, int j, float z, const float *color);
   static void addToClearQueue(int i, int j, float z, const float *color);
+  static void drawSquare(int i, int j, float z, const float *color);
  private:
   static void glInit();
   static void display();
@@ -33,7 +34,6 @@ class ShortestPath {
   static void adMat();
   static void reshape(int w, int h);
   static void timer(int t);
-  static void drawSquare(int i, int j, float z, const float *color);
   static void clearDisplay();
   static void keyboardListener(unsigned char key, int x, int y);
 };

@@ -11,10 +11,11 @@
 int minDistance(int dist[], bool sptSet[]) {
   int min = INT_MAX, min_index;
 
-  for (int v = 0; v < V; v++)
-    if (sptSet[v] == false && dist[v] <= min)
+  for (int v = 0; v < V; v++) {
+    if (sptSet[v] == false && dist[v] <= min) {
       min = dist[v], min_index = v;
-
+    }
+  }
   return min_index;
 }
 
@@ -44,7 +45,8 @@ void dijkstra(int graph[V][V], int src, int destination) {
           && dist[u] + graph[u][v] < dist[v]) {
         dist[v] = dist[u] + graph[u][v];
         parent[v] = u;
-        if (u == destination || v == destination) {
+        if (v == destination) {
+          std::cout << "The distance of the route by Dijkstra(ms): " << dist[v]<<std::endl;
           goto result;
         }
         ShortestPath::addToSquareQueue(v % NUM_DIVISIONS, v / NUM_DIVISIONS, -1, COLOR_BLUE);
@@ -73,7 +75,11 @@ void dijkstra(int graph[V][V], int src, int destination) {
 
 int Dijkstra::main(int graph[V][V], int source, int destination) {
 
+  clock_t start = clock();
   dijkstra(graph, source, destination);
+  clock_t end = clock();
+  double time_elapsed = double(end - start);
+  std::cout << "Time to calculate the route by Dijkstra(ms): " << time_elapsed << std::endl;
 
   return 0;
 }

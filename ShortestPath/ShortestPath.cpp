@@ -33,7 +33,7 @@ const int MODE_CALC2 = 2;
 int left_click = 0;
 int block_count = 0;
 int mode = MODE_START;
-const int timeDelay = 15;
+const int timeDelay = 10;
 
 int SP::main(int argc, char **argv) {
   glutInit(&argc, argv);
@@ -78,13 +78,13 @@ void SP::drawBackground() {
   for (float i = 0.0; i < w + mouseDx; i = i + mouseDx) {
     glBegin(GL_LINE_STRIP);
     for (float j = 0.0; j < h + mouseDy; j = j + mouseDy)
-      glVertex2f(i, j);
+      glVertex3f(i, j,5);
     glEnd();
   }
   for (float i = 0.0; i < h + mouseDy; i = i + mouseDy) {
     glBegin(GL_LINE_STRIP);
     for (float j = 0.0; j < w + mouseDx; j = j + mouseDx)
-      glVertex2f(j, i);
+      glVertex3f(j, i,5);
     glEnd();
   }
 }

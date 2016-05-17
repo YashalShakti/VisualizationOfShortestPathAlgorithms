@@ -13,7 +13,7 @@ bool operator<(const node &a, const node &b) {
 }
 
 // Function to find the path
-string AS::pathFind(const int &xStart, const int &yStart,
+int AS::pathFind(const int &xStart, const int &yStart,
                     const int &xFinish, const int &yFinish) {
   static priority_queue<node> pq[2]; // list of open (not-yet-tried) nodes
   static int pqi; // pq index
@@ -61,24 +61,24 @@ string AS::pathFind(const int &xStart, const int &yStart,
       // by following the directions
 
 
-      string path = "";
+      int distance=0;
       while (true) {
         j = dir_map[x][y];
-        c = '0' + (j + dir / 2) % dir;
-        path = c + path;
         x += dx[j];
         y += dy[j];
+        distance++;
         if((x == xStart && y == yStart)){
           break;
         }
         ShortestPath::addToSquareQueue(x,y,10,COLOR_RANDOM);
       }
+      std::cout << "The distance of the route by A*(ms): " << distance<<std::endl;
 
       // garbage collection
       delete n0;
       // empty the leftover nodes
       while (!pq[pqi].empty()) pq[pqi].pop();
-      return path;
+      return distance;
     }
 
     // generate moves (child nodes) in all possible directions
@@ -135,7 +135,7 @@ string AS::pathFind(const int &xStart, const int &yStart,
     }
     delete n0; // garbage collection
   }
-  return ""; // no route found
+  return 0; // no route found
 }
 
 int AS::main(int sourceV[2], int endV[2], int inputMatrix[n][m]) {
@@ -162,14 +162,10 @@ int AS::main(int sourceV[2], int endV[2], int inputMatrix[n][m]) {
 
   // get the route
   clock_t start = clock();
-  string route = AS::pathFind(xA, yA, xB, yB);
-  if (route == "") cout << "An empty route generated!" << endl;
+  AS::pathFind(xA, yA, xB, yB);
   clock_t end = clock();
-
   double time_elapsed = double(end - start);
   cout << "Time to calculate the route (ms): " << time_elapsed << endl;
-  cout << "Route:" << endl;
-  cout << route << endl << endl;
   return (0);
 }
 
