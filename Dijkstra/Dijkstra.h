@@ -10,7 +10,7 @@ const int V=NUM_DIVISIONS*NUM_DIVISIONS;
 
 class Dijkstra {
  public:
-  int main(int graph[V][V], int source, int destination);
+  int main(int graph[V][V], int source, int destination, double finalResult[2][2]);
 };
 
 

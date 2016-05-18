@@ -14,7 +14,7 @@ bool operator<(const node &a, const node &b) {
 
 // Function to find the path
 int AS::pathFind(const int &xStart, const int &yStart,
-                    const int &xFinish, const int &yFinish) {
+                 const int &xFinish, const int &yFinish) {
   static priority_queue<node> pq[2]; // list of open (not-yet-tried) nodes
   static int pqi; // pq index
   static node *n0;
@@ -22,7 +22,6 @@ int AS::pathFind(const int &xStart, const int &yStart,
   static int i, j, x, y, xdx, ydy;
   static char c;
   pqi = 0;
-
   // Reset the node maps
   for (y = 0; y < m; y++) {
     for (x = 0; x < n; x++) {
@@ -49,7 +48,7 @@ int AS::pathFind(const int &xStart, const int &yStart,
     y = n0->getyPos();
 
     pq[pqi].pop(); // remove the node from the open list
-    ShortestPath::addToSquareQueue(x,y,0.1,COLOR_BLUE);
+    ShortestPath::addToSquareQueue(x, y, 0.1, COLOR_BLUE);
     open_nodes_map[x][y] = 0;
     // mark it on the closed nodes map
     closed_nodes_map[x][y] = 1;
@@ -61,18 +60,18 @@ int AS::pathFind(const int &xStart, const int &yStart,
       // by following the directions
 
 
-      int distance=0;
+      int distance = 0;
       while (true) {
         j = dir_map[x][y];
         x += dx[j];
         y += dy[j];
         distance++;
-        if((x == xStart && y == yStart)){
+        if ((x == xStart && y == yStart)) {
           break;
         }
-        ShortestPath::addToSquareQueue(x,y,10,COLOR_RANDOM);
+        ShortestPath::addToSquareQueue(x, y, 10, COLOR_RANDOM);
       }
-      std::cout << "The distance of the route by A*(ms): " << distance<<std::endl;
+      std::cout << "The distance of the route by A*(ms): " << distance << std::endl;
 
       // garbage collection
       delete n0;
@@ -96,14 +95,14 @@ int AS::pathFind(const int &xStart, const int &yStart,
 
         // if it is not in the open list then add into that
         if (open_nodes_map[xdx][ydy] == 0) {
-          ShortestPath::addToSquareQueue(xdx,ydy,0.0,COLOR_GRAY);
+          ShortestPath::addToSquareQueue(xdx, ydy, 0.0, COLOR_GRAY);
           open_nodes_map[xdx][ydy] = m0->getPriority();
           pq[pqi].push(*m0);
           delete m0; // Only <-- new added by commenter // mark its parent node direction
           dir_map[xdx][ydy] = (i + dir / 2) % dir;
         }
         else if (open_nodes_map[xdx][ydy] > m0->getPriority()) {
-          ShortestPath::addToSquareQueue(xdx,ydy,0.0,COLOR_RED);
+          ShortestPath::addToSquareQueue(xdx, ydy, 0.0, COLOR_RED);
           // update the priority info
           open_nodes_map[xdx][ydy] = m0->getPriority();
           // update the parent direction info
@@ -138,7 +137,7 @@ int AS::pathFind(const int &xStart, const int &yStart,
   return 0; // no route found
 }
 
-int AS::main(int sourceV[2], int endV[2], int inputMatrix[n][m]) {
+int AS::main(int sourceV[2], int endV[2], int inputMatrix[n][m], double finalResult[2][2]) {
 
   for (int y = 0; y < m; y++) {
     for (int x = 0; x < n; x++) {
@@ -156,20 +155,19 @@ int AS::main(int sourceV[2], int endV[2], int inputMatrix[n][m]) {
   yB = endV[0];
   xB = endV[1];
 
-  cout << "Map Size (X,Y): " << n << "," << m << endl;
-  cout << "Start: " << xA << "," << yA << endl;
-  cout << "Finish: " << xB << "," << yB << endl;
+  cout << "A* algorithm"<< endl;
 
   // get the route
   clock_t start = clock();
-  AS::pathFind(xA, yA, xB, yB);
+  finalResult[1][0] = AS::pathFind(xA, yA, xB, yB);
   clock_t end = clock();
   double time_elapsed = double(end - start);
-  cout << "Time to calculate the route (ms): " << time_elapsed << endl;
-  return (0);
+  finalResult[1][1] = time_elapsed;
+  cout << "Time to calculate the route by A*(ms): " << time_elapsed << endl;
+  return 0;
 }
 
 int node::max(int abs, int abs1) const {
-  return abs>=abs1?abs:abs1;
+  return abs >= abs1 ? abs : abs1;
 }
 

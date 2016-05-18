@@ -84,7 +84,7 @@ class node {
 
 class AStar {
  public:
-  int main(int sourceV[2], int endV[2],int inputMatrix[n][m]);
+  int main(int sourceV[2], int endV[2],int inputMatrix[n][m], double finalResult[2][2]);
  private:
   static int pathFind(const int &xStart, const int &yStart, const int &xFinish, const int &yFinish);
 };

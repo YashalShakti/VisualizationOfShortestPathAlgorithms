@@ -4,26 +4,19 @@
 
 #ifndef CG2016_SHORTESTPATH_H
 #define CG2016_SHORTESTPATH_H
+#include "Constants.h"
+
 const int NUM_DIVISIONS = 38;
-
-
-const float COLOR_RED[4] = {1.0, 0.0, 0.0, 150.0};
-const float COLOR_WHITE[4] = {1.0, 1.0, 1.0, 150.0};
-const float COLOR_GREEN[4] = {0.0, 1.0, 0.0, 150.0};
-const float COLOR_GRAY[4] = {0.5, 0.5, 0.5, 150.0};
-const float COLOR_BLACK[4] = {0.0, 0.0, 0.0, 150.0};
-const float COLOR_BLUE[4] = {0.0, 1.0, 1.0, 150.0};
-const float COLOR_ORANGE[4] = {1.0, 1.0, 0.0, 150.0};
-const float COLOR_RANDOM[4] = {0.6, 0.2, 0.4, 150.0};
 
 
 class ShortestPath {
  public:
+  ShortestPath();
   int main(int argc, char *argv[]);
-  static void disable();
   static void addToSquareQueue(int i, int j, float z, const float *color);
   static void addToClearQueue(int i, int j, float z, const float *color);
   static void drawSquare(int i, int j, float z, const float *color);
+
  private:
   static void glInit();
   static void display();
@@ -31,11 +24,17 @@ class ShortestPath {
   static void mouseClickListener(int btn, int state, int x, int);
   static void mouseMotion(int x, int y);
   static void setTile(int i, int j);
-  static void adMat();
+  static void getDistanceMatrix();
   static void reshape(int w, int h);
   static void timer(int t);
   static void clearDisplay();
   static void keyboardListener(unsigned char key, int x, int y);
+  static void globalCycle();
+
+  static const int timeDelay = 23;
+  static constexpr float w = 720.0f, h = 720.0f;
+  static constexpr float mouseDx = w / NUM_DIVISIONS;
+  static constexpr float mouseDy = h / NUM_DIVISIONS;
 };
 
 
