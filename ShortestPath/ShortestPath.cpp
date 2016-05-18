@@ -37,7 +37,7 @@ const int MODE_RESULT = 3;
 int left_click = 0;
 int block_count = 0;
 int mode = MODE_START;
-const int timeDelay = 15;
+const int timeDelay = 23;
 
 int SP::main(int argc, char **argv) {
   glutInit(&argc, argv);
@@ -115,7 +115,7 @@ void ShortestPath::disable() {
   glDisable(GL_DEPTH_TEST);
 }
 void  SP::addToSquareQueue(int i, int j, float z, const float *color) {
-  if (mode == MODE_CALC1 || mode == MODE_CALC2) {
+  if (mode == MODE_CALC1 || mode == MODE_CALC2 || mode == MODE_RESULT) {
     Square temp;
     temp.i = i;
     temp.j = j;
