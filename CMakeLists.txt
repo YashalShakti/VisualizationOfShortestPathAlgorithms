@@ -26,7 +26,7 @@ endif(NOT OPENGL_FOUND)
 #########################################################
 # Include Files
 #########################################################
-add_executable(output main.cpp main.h ShortestPath/ShortestPath.cpp ShortestPath/ShortestPath.h Dijkstra/Dijkstra.cpp Dijkstra/Dijkstra.h AStar/AStar.cpp AStar/AStar.h)
+add_executable(output main.cpp main.h ShortestPath/ShortestPath.cpp ShortestPath/ShortestPath.h Dijkstra/Dijkstra.cpp Dijkstra/Dijkstra.h AStar/AStar.cpp AStar/AStar.h ShortestPath/Constants.h)
 
 ########################################################
 # Linking & stuff

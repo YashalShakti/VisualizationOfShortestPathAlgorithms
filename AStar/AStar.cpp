@@ -155,9 +155,7 @@ int AS::main(int sourceV[2], int endV[2], int inputMatrix[n][m], double finalRes
   yB = endV[0];
   xB = endV[1];
 
-  cout << "Map Size (X,Y): " << n << "," << m << endl;
-  cout << "Start: " << xA << "," << yA << endl;
-  cout << "Finish: " << xB << "," << yB << endl;
+  cout << "A* algorithm"<< endl;
 
   // get the route
   clock_t start = clock();
@@ -165,7 +163,7 @@ int AS::main(int sourceV[2], int endV[2], int inputMatrix[n][m], double finalRes
   clock_t end = clock();
   double time_elapsed = double(end - start);
   finalResult[1][1] = time_elapsed;
-  cout << "Time to calculate the route sd(ms): " << time_elapsed << endl;
+  cout << "Time to calculate the route by A*(ms): " << time_elapsed << endl;
   return 0;
 }
 
