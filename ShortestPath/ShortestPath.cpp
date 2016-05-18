@@ -33,7 +33,7 @@ const int MODE_CALC2 = 2;
 int left_click = 0;
 int block_count = 0;
 int mode = MODE_START;
-const int timeDelay = 10;
+const int timeDelay = 23;
 
 int SP::main(int argc, char **argv) {
   glutInit(&argc, argv);
