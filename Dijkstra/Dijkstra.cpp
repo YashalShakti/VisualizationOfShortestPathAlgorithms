@@ -25,7 +25,7 @@ int printSolution(int dist[], int n) {
     printf("%d \t\t %d\n", i, dist[i]);
 }
 
-void dijkstra(int graph[V][V], int src, int destination) {
+void dijkstra(int graph[V][V], int src, int destination, double finalResult[2][2]) {
   int dist[V];
   int parent[V];
   bool sptSet[V];
@@ -46,6 +46,7 @@ void dijkstra(int graph[V][V], int src, int destination) {
         dist[v] = dist[u] + graph[u][v];
         parent[v] = u;
         if (v == destination) {
+          finalResult[0][0]=dist[v];
           std::cout << "The distance of the route by Dijkstra(ms): " << dist[v]<<std::endl;
           goto result;
         }
@@ -73,12 +74,13 @@ void dijkstra(int graph[V][V], int src, int destination) {
   //printSolution(dist, V);
 }
 
-int Dijkstra::main(int graph[V][V], int source, int destination) {
+int Dijkstra::main(int graph[V][V], int source, int destination, double finalResult[2][2]) {
 
   clock_t start = clock();
-  dijkstra(graph, source, destination);
+  dijkstra(graph, source, destination, finalResult);
   clock_t end = clock();
   double time_elapsed = double(end - start);
+  finalResult[0][1]=time_elapsed;
   std::cout << "Time to calculate the route by Dijkstra(ms): " << time_elapsed << std::endl;
 
   return 0;

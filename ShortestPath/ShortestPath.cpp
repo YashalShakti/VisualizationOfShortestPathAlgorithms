@@ -9,6 +9,8 @@
 #include "../Dijkstra/Dijkstra.h"
 #include "../AStar/AStar.h"
 
+using namespace std;
+
 struct Square {
   int i;
   int j;
@@ -20,20 +22,22 @@ float w = 720.0f, h = 720.0f;
 float mouseDx = w / NUM_DIVISIONS;
 float mouseDy = h / NUM_DIVISIONS;
 typedef ShortestPath SP;
+static double finalResult[2][2];
 
 int vertice[NUM_DIVISIONS][NUM_DIVISIONS];
-std::queue<Square> squareQueue;
-std::queue<Square> clearQueue;
+queue<Square> squareQueue;
+queue<Square> clearQueue;
 
 const int MODE_START = -1;
 const int MODE_END = -2;
 const int MODE_BLOCK = 0;
 const int MODE_CALC1 = 1;
 const int MODE_CALC2 = 2;
+const int MODE_RESULT = 3;
 int left_click = 0;
 int block_count = 0;
 int mode = MODE_START;
-const int timeDelay = 10;
+const int timeDelay = 15;
 
 int SP::main(int argc, char **argv) {
   glutInit(&argc, argv);
@@ -78,13 +82,13 @@ void SP::drawBackground() {
   for (float i = 0.0; i < w + mouseDx; i = i + mouseDx) {
     glBegin(GL_LINE_STRIP);
     for (float j = 0.0; j < h + mouseDy; j = j + mouseDy)
-      glVertex3f(i, j,5);
+      glVertex3f(i, j, 5);
     glEnd();
   }
   for (float i = 0.0; i < h + mouseDy; i = i + mouseDy) {
     glBegin(GL_LINE_STRIP);
     for (float j = 0.0; j < w + mouseDx; j = j + mouseDx)
-      glVertex3f(j, i,5);
+      glVertex3f(j, i, 5);
     glEnd();
   }
 }
@@ -247,7 +251,7 @@ void SP::adMat() {
   }
   mode = MODE_CALC1;
   Dijkstra *dijkstra = new Dijkstra();
-  dijkstra->main(adMat, sourcePoint, destinationPoint);
+  dijkstra->main(adMat, sourcePoint, destinationPoint, finalResult);
 }
 
 void SP::mouseClickListener(int btn, int state, int x, int y) {
@@ -269,8 +273,8 @@ void SP::mouseClickListener(int btn, int state, int x, int y) {
       /* AStar *aStar = new AStar();
        aStar->main(sourceV, destinationV, vertice);*/
     } else if (mode == MODE_CALC2) {
-      AStar *aStar = new AStar();
-      aStar->main(sourceV, destinationV, vertice);
+    /*  AStar *aStar = new AStar();
+      aStar->main(sourceV, destinationV, vertice);*/
     } else {
       adMat();
     }
@@ -289,8 +293,22 @@ void SP::keyboardListener(unsigned char key, int x, int y) {
          aStar->main(sourceV, destinationV, vertice);*/
       } else if (mode == MODE_CALC2) {
         AStar *aStar = new AStar();
-        aStar->main(sourceV, destinationV, vertice);
-      } else {
+        mode = MODE_RESULT;
+
+        aStar->main(sourceV, destinationV, vertice, finalResult);
+        cout<<"Done"<<mode;
+      } else if (mode == MODE_RESULT) {
+        char *temp;
+        sprintf(temp, " zenity --info --title=\"Results\""
+            " --text=\"Dijikstra\n"
+            " Distance: %lf\n"
+            " Time taken: %lf\n"
+            " A* algorithm\n"
+            " Distance: %lf\n"
+            " Time taken: %lf\n\"", finalResult[0][0], finalResult[0][1], finalResult[1][0], finalResult[1][1]);
+        system(temp);
+      }
+      else {
         adMat();
       }
     }
@@ -301,7 +319,7 @@ void SP::keyboardListener(unsigned char key, int x, int y) {
       break;
     case 'a': {
       AStar *aStar = new AStar();
-      aStar->main(sourceV, destinationV, vertice);
+      aStar->main(sourceV, destinationV, vertice, finalResult);
     }
       break;
     case 'c': {
